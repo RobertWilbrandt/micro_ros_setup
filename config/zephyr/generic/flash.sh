@@ -10,7 +10,20 @@ if [ "$PLATFORM" = "host" ]; then
         exit 1
     fi
 
-    $ZEPHYR_BUILD_DIR/zephyr.exe
+    NATIVE_FLASH_CMD="$ZEPHYR_BUILD_DIR/zephyr.exe"
+
+    if [ "$UROS_VERBOSE_FLASH" = "on" ]; then
+        echo ""
+        echo "-----------------------------"
+        echo "| Verbose flash information |"
+        echo "-----------------------------"
+        echo "Executable:          $ZEPHYR_BUILD_DIR/zephyr.exe"
+        echo "Flash method:        Native executable"
+        echo "Full flash command:  "${NATIVE_FLASH_CMD[@]}
+        echo ""
+    fi
+
+    eval ${NATIVE_FLASH_CMD[@]}
 
 else
 
@@ -56,11 +69,27 @@ else
 
     if [ "$FLASH_OPENOCD" = true ]; then
 
-        openocd -f $OPENOCD_PROGRAMMER -f target/$OPENOCD_TARGET \
-                -c init \
-                -c "reset halt" \
-                -c "flash write_image erase $ZEPHYR_BUILD_DIR/zephyr.bin 0x08000000" \
-                -c "reset run; exit"
+        OPENOCD_FLASH_CMD="
+            openocd -f $OPENOCD_PROGRAMMER -f target/$OPENOCD_TARGET
+                -c init
+                -c \"reset halt\"
+                -c \"flash write_image erase $ZEPHYR_BUILD_DIR/zephyr.bin 0x08000000\"
+                -c \"reset run; exit\""
+
+        if [ "$UROS_VERBOSE_FLASH" = "on" ]; then
+            echo ""
+            echo "-----------------------------"
+            echo "| Verbose flash information |"
+            echo "-----------------------------"
+            echo "Executable:          $ZEPHYR_BUILD_DIR/zephyr.bin"
+            echo "Flash method:        OpenOCD"
+            echo "OpenOCD programmer:  $OPENOCD_PROGRAMMER"
+            echo "OpenOCD target:      $OPENOCD_TARGET"
+            echo "Full flash command:  "${OPENOCD_FLASH_CMD[@]}
+            echo ""
+        fi
+
+        eval ${OPENOCD_FLASH_CMD[@]}
 
     else
 
@@ -70,7 +99,20 @@ else
 
         source $FW_TARGETDIR/zephyrproject/zephyr/zephyr-env.sh
 
-        west flash
+        WEST_FLASH_CMD="west flash"
+
+        if [ "$UROS_VERBOSE_FLASH" = "on" ]; then
+            echo ""
+            echo "-----------------------------"
+            echo "| Verbose flash information |"
+            echo "-----------------------------"
+            echo "Executable:          $ZEPHYR_BUILD_DIR/zephyr.bin"
+            echo "Flash method:        west"
+            echo "Full flash command:  "${WEST_FLASH_CMD[@]}
+            echo ""
+        fi
+
+        eval ${WEST_FLASH_CMD[@]}
 
     fi
 

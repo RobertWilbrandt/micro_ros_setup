@@ -7,6 +7,29 @@ set -o pipefail
 FW_TARGETDIR=$(pwd)/firmware
 PREFIX=$(ros2 pkg prefix micro_ros_setup)
 
+# Parse cli arguments
+UROS_VERBOSE_FLASH=off
+
+while getopts "v" o
+do
+    case "$o" in
+        v)
+            echo "Flashing in verbose mode"
+            UROS_VERBOSE_FLASH=on
+            ;;
+        [?])
+            echo "Usage: ros2 run micro_ros_setup flash_firmware.sh [options]"
+            echo "Options:"
+            echo "  -v  Print verbose flash output"
+            exit 1
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+export UROS_VERBOSE_FLASH
+
 # Checking if firmware exists
 if [ -d $FW_TARGETDIR ]; then
     RTOS=$(head -n1 $FW_TARGETDIR/PLATFORM)
