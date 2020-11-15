@@ -10,16 +10,17 @@ if [ "$PLATFORM" = "host" ]; then
         exit 1
     fi
 
-    NATIVE_FLASH_CMD="$ZEPHYR_BUILD_DIR/zephyr.exe"
+    NATIVE_FLASH_CMD="$ZEPHYR_BUILD_DIR/zephyr.exe ${UROS_EXTRA_FLASH_ARGS[@]}"
 
     if [ "$UROS_VERBOSE_FLASH" = "on" ]; then
         echo ""
         echo "-----------------------------"
         echo "| Verbose flash information |"
         echo "-----------------------------"
-        echo "Executable:          $ZEPHYR_BUILD_DIR/zephyr.exe"
-        echo "Flash method:        Native executable"
-        echo "Full flash command:  "${NATIVE_FLASH_CMD[@]}
+        echo "Executable:              $ZEPHYR_BUILD_DIR/zephyr.exe"
+        echo "Flash method:            Native executable"
+        echo "Extra flash arguments:  "${UROS_EXTRA_FLASH_ARGS[@]}
+        echo "Full flash command:     "${NATIVE_FLASH_CMD[@]}
         echo ""
     fi
 
@@ -74,18 +75,20 @@ else
                 -c init
                 -c \"reset halt\"
                 -c \"flash write_image erase $ZEPHYR_BUILD_DIR/zephyr.bin 0x08000000\"
-                -c \"reset run; exit\""
+                -c \"reset run; exit\"
+                ${UROS_EXTRA_FLASH_ARGS[@]}"
 
         if [ "$UROS_VERBOSE_FLASH" = "on" ]; then
             echo ""
             echo "-----------------------------"
             echo "| Verbose flash information |"
             echo "-----------------------------"
-            echo "Executable:          $ZEPHYR_BUILD_DIR/zephyr.bin"
-            echo "Flash method:        OpenOCD"
-            echo "OpenOCD programmer:  $OPENOCD_PROGRAMMER"
-            echo "OpenOCD target:      $OPENOCD_TARGET"
-            echo "Full flash command:  "${OPENOCD_FLASH_CMD[@]}
+            echo "Executable:             $ZEPHYR_BUILD_DIR/zephyr.bin"
+            echo "Flash method:           OpenOCD"
+            echo "OpenOCD programmer:     $OPENOCD_PROGRAMMER"
+            echo "OpenOCD target:         $OPENOCD_TARGET"
+            echo "Extra flash arguments:  "${UROS_EXTRA_FLASH_ARGS[@]}
+            echo "Full flash command:     "${OPENOCD_FLASH_CMD[@]}
             echo ""
         fi
 
@@ -99,16 +102,17 @@ else
 
         source $FW_TARGETDIR/zephyrproject/zephyr/zephyr-env.sh
 
-        WEST_FLASH_CMD="west flash"
+        WEST_FLASH_CMD="west flash ${UROS_EXTRA_FLASH_ARGS[@]}"
 
         if [ "$UROS_VERBOSE_FLASH" = "on" ]; then
             echo ""
             echo "-----------------------------"
             echo "| Verbose flash information |"
             echo "-----------------------------"
-            echo "Executable:          $ZEPHYR_BUILD_DIR/zephyr.bin"
-            echo "Flash method:        west"
-            echo "Full flash command:  "${WEST_FLASH_CMD[@]}
+            echo "Executable:             $ZEPHYR_BUILD_DIR/zephyr.bin"
+            echo "Flash method:           west"
+            echo "Extra flash arguments:  "${UROS_EXTRA_FLASH_ARGS[@]}
+            echo "Full flash command:     "${WEST_FLASH_CMD[@]}
             echo ""
         fi
 

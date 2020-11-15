@@ -9,12 +9,14 @@ PREFIX=$(ros2 pkg prefix micro_ros_setup)
 
 # Parse cli arguments
 UROS_VERBOSE_FLASH=off
+UROS_EXTRA_FLASH_ARGS=""
 
 function usage {
-    echo "Usage: ros2 run micro_ros_setup flash_firmware.sh [options]"
+    echo "Usage: ros2 run micro_ros_setup flash_firmware.sh [options] -- [flash_args]"
     echo "Options:"
     echo "  -h   Display help and exit."
     echo "  -v   Print verbose flash output."
+    echo "Flash args: These options will get directly forwarded to the flash program (currently only supported for zephyr)."
 }
 
 while getopts "vh" o
@@ -33,10 +35,14 @@ do
             ;;
     esac
 done
-
 shift $((OPTIND-1))
 
+if [[ -n "$@" ]]; then
+    UROS_EXTRA_FLASH_ARGS=("$@")
+fi
+
 export UROS_VERBOSE_FLASH
+export UROS_EXTRA_FLASH_ARGS
 
 # Checking if firmware exists
 if [ -d $FW_TARGETDIR ]; then
