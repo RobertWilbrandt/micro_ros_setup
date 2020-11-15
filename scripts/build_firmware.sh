@@ -13,7 +13,16 @@ UROS_FAST_BUILD=off
 UROS_VERBOSE_BUILD=off
 UROS_EXTRA_BUILD_ARGS=""
 
-while getopts "vf" o
+function usage {
+    echo "Usage: ros2 run micro_ros_setup build_firmware.sh [options] -- [build_args]"
+    echo "Options:"
+    echo "  -h   Display help and exit."
+    echo "  -v   Print verbose build output."
+    echo "  -f   Activate Fast-Build. Without this, mcu_ws will get rebuilt completely."
+    echo "Build args: These options will get directly forwarded to the build system (currently only supported for zephyr)."
+}
+
+while getopts "vfh" o
 do
     case "$o" in
         f)
@@ -24,12 +33,12 @@ do
             echo "Building in verbose mode"
             UROS_VERBOSE_BUILD=on
             ;;
+        h)
+            usage
+            exit 0
+            ;;
         [?])
-            echo "Usage: ros2 run micro_ros_setup build_firmware.sh [options] -- [build_args]"
-            echo "Options:"
-            echo "  -v   Print verbose build output."
-            echo "  -f   Activate Fast-Build. Without this, mcu_ws will get rebuilt completely."
-            echo "Build args: These options will get directly forwarded to the build system (currently only supported for zephyr)."
+            usage
             exit 1
             ;;
   esac

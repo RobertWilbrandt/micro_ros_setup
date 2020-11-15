@@ -10,17 +10,25 @@ PREFIX=$(ros2 pkg prefix micro_ros_setup)
 # Parse cli arguments
 UROS_VERBOSE_FLASH=off
 
-while getopts "v" o
+function usage {
+    echo "Usage: ros2 run micro_ros_setup flash_firmware.sh [options]"
+    echo "Options:"
+    echo "  -h   Display help and exit."
+    echo "  -v   Print verbose flash output."
+}
+
+while getopts "vh" o
 do
     case "$o" in
         v)
-            echo "Flashing in verbose mode"
             UROS_VERBOSE_FLASH=on
             ;;
+        h)
+            usage
+            exit 0
+            ;;
         [?])
-            echo "Usage: ros2 run micro_ros_setup flash_firmware.sh [options]"
-            echo "Options:"
-            echo "  -v  Print verbose flash output"
+            usage
             exit 1
             ;;
     esac
